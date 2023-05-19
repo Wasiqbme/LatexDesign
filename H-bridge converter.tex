@@ -1,0 +1,49 @@
+\documentclass [border=5pt]{standalone}
+\usepackage{tikz}
+\usepackage[american,cuteinductors,smartlabels]{circuitikz} % A package to draw electrical networks with TikZ
+%Design parameters, change it according to your need
+\ctikzset{bipoles/thickness=0.5}%change the thickness of the outerlines of the diode
+\ctikzset{bipoles/length=0.5cm}%Change the length of the diodes, inductor and the battery
+\ctikzset{bipoles/diode/height=0.6}%change the height of the diode
+\ctikzset{bipoles/diode/width=0.6}%Varies the width of the diode
+\ctikzset{tripoles/thickness=0.5}% varies the thickness of the IGBT, higher values increase boldness of the IGBT
+\ctikzset{bipoles/battery1/height=.5}%Change the height of battery
+% defining distances between elements--- One can change the dimension for the converter by changing these distances:
+\newcommand\IHD{1.5} %Horizontal distance between IGBTs in a cell
+\newcommand\IVD{0.4} %Vertical distance between IGBTs in a cell
+\newcommand\VSD{0.9} %distance of the voltage source
+\newcommand\fillsize{0.5} %fillsize
+\tikzstyle{every node}=[font=\tiny]%change the fontsize, change it to \large and see the changes
+\tikzstyle{every path}=[line width=0.4 pt, line cap=round, line join=round]%Change the thicknes of the wire
+\begin{document}
+\begin{circuitikz}
+% defining distances between elements--- One can change the dimension for the converter by changing these distances:
+
+%---- Phase A, Bottom cell B
+%B2A.C means from node B to node A and connected to the collector terminal of the IGBT
+\coordinate  (AB) at (0,0); %%AB stands for phase A, Bottom B
+\draw (AB) node[nigbt, bodydiode, anchor=E](B4A){$S_{2b}$} --++(-\IHD,0) node[nigbt, bodydiode, anchor=E](B2A){$S_{1b}$} ; % using "node" we defined IGBT with diode 
+\draw  (B2A.C) --++(0,\IVD) node[nigbt, bodydiode, anchor=E](B1A){$S_{1a}$} ; %% B1A stands for Bottom 1st phase A 
+\draw  (B4A.C) --++(0,\IVD) node[nigbt, bodydiode, anchor=E](B3A){$S_{2a}$} ;
+\draw  (B3A.C) --(B1A.C){} ;
+
+%Connection of the H-bridge converter to the Battery
+\draw  (B1A.C)--++(-\VSD,0)  coordinate (ABVP); %% positive pole of the battery
+\draw (B2A.E)--++(-\VSD,0)  coordinate (ABVN); %%  negative pole of the battery
+\draw (ABVP) to [battery1,  l_=${V_{dc}}$] (ABVN); %Battery Connection
+
+
+%Connection of the output terminal to the filter
+\draw  (B2A.C)++ (0,0.35) coordinate  (Con1AB) ; %% Con1AB stands for output connection from leg A to the inductor
+\filldraw  (Con1AB) circle (\fillsize pt);
+
+\draw  (B4A.C)++ (0,-0.05) coordinate  (Con2AB) ; %% Con1AB stands for output connection from leg B to the inductor
+\filldraw  (Con2AB) circle (\fillsize pt);
+%The arc on the wire
+\draw (Con1AB) --++ (\IHD-0.06,0)  arc (180:0:0.06) -- ++(0.5,0) coordinate (ABOP); %ABOP is the positive O/P point
+\draw (Con2AB) -- ++(0.56,0)  coordinate (ABON); %ABON is the negative O/P point
+\draw (ABOP)++ (0.0,0) to [L,l = $L_1$] ++ (0.5,0)  to [R,l = $R$] ++(1,0) coordinate (E1);%Connection to the Resistor and defining the Coordinate E1
+\draw (ABON)++ (0.0,0) to [L,l = $L_2$] ++ (0.5,0) coordinate (E2);% defining the Coordinate E1
+\draw (E1)|-(E2);%End terminal connection
+\end{circuitikz}
+\end{document}
