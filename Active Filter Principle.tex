@@ -1,0 +1,88 @@
+%Interleaved three H-Bridge Topology
+% Author MOhammad Wasiq
+
+\documentclass [border=2.5pt]{standalone}
+\usepackage{rotating}
+% \usepackage{xcolor}
+\usepackage{transparent}
+
+\usepackage{pgf,tikz}
+\usetikzlibrary{positioning,fit,calc}
+\usepackage[american,cuteinductors,smartlabels]{circuitikz} % A package to draw electrical networks with TikZ
+%Design parameters, change it according to your need
+\ctikzset{bipoles/thickness=0.5}%change the thickness of the outerlines of the diode
+\ctikzset{bipoles/length=0.5cm}%Change the length of the diodes, inductor and the battery
+\ctikzset{bipoles/diode/height=0.6}%change the height of the diode
+\ctikzset{bipoles/diode/width=0.6}%Varies the width of the diode
+\ctikzset{tripoles/thickness=0.5}% varies the thickness of the IGBT, higher values increase boldness of the IGBT
+\ctikzset{bipoles/vsourceam/height/.initial=1}
+\ctikzset{bipoles/vsourceam/width/.initial=1}
+\ctikzset{bipoles/vsourceam/length/.initial=1}
+%\ctikzset{V/height=1}%Change the height of battery
+% defining distances between elements--- One can change the dimension for the converter by changing these distances:
+\newcommand\dimI{7} 
+\newcommand\dimII{2} 
+\newcommand\dimIII{1.5}
+\newcommand\dimIV{3}
+
+\tikzstyle{every node}=[font=\small]%change the fontsize, change it to \large and see the changes
+\tikzstyle{every path}=[line width=0.4 pt, line cap=round, line join=round]%Change the thicknes of the wire
+\begin{document}
+\begin{circuitikz}[american voltages]
+% Generator
+\tiny
+\coordinate (A) at (0,0);
+\draw[thick] (A) to [thick,V,color=red,l=${V_{s}}$]++(-0.5,0)coordinate(p1);
+\draw[thick] (A)--++(\dimI,0)coordinate(p2);
+\draw[thick] (p2)--++(\dimII-0.35,0)coordinate(p);
+\draw[thick] (p2)--++(0,-\dimIII-0.25) coordinate(p3);
+\draw[thick] (p3) --++(0,-\dimIII-0.25) coordinate(p4);
+\draw[thick] (p4) --++(-\dimII+0.35,0) coordinate(p5);
+\draw[thick] (p5) --++(-\dimIII-0.75,0) coordinate(p6);
+\draw[thick] (p6) --++(-\dimII+0.35,0) coordinate(p7);
+\draw[thick] (p7) --++(0,\dimIII+0.25) coordinate(p8);
+\draw[thick] (p8) --++(0,\dimIII+0.25) coordinate(p9);
+\fill[black] (p9) circle (0.05 cm);
+\fill[black] (p2) circle (0.05 cm);
+% Currents arrow
+
+% \draw (I12) -- (I13);
+% %Load
+\node[rectangle,
+    draw=black,thick,text=blue,
+    fill = white,opacity=1,
+    minimum width = 1cm, 
+    minimum height = 1.5cm] (r.center) at (p) {\rotatebox[origin=c]{0}{\parbox{1.5cm}{Non-linear \centering{Load}}}};
+\node[rectangle,
+    draw=black,thick,text=blue,
+    fill = white,opacity=1,
+    minimum width = 1cm, 
+    minimum height = 1.5cm] (r.center) at (p3) {\rotatebox[origin=c]{0}{\parbox{1.5cm}{Harmonic Current  \centering{Detection}}}};
+\node[rectangle,
+    draw=black,thick,text=blue,
+    fill = white,opacity=1,
+    minimum width = 1cm, 
+    minimum height = 1.5cm] (r.center) at (p5) {\rotatebox[origin=c]{0}{\parbox{1.5cm}{Current Tracking  \centering{Control}}}};
+\node[rectangle,
+    draw=black,thick,text=blue,
+    fill = white,opacity=1,
+    minimum width = 1cm, 
+    minimum height = 1.5cm] (r.center) at (p6) {\rotatebox[origin=c]{0}{\parbox{1.5cm}{PWM \centering{Generation}}}};
+\node[rectangle,
+    draw=black,thick,text=blue,
+    fill = white,opacity=1,
+    minimum width = 1cm, 
+    minimum height = 1.5cm] (r.center) at (p8) {\rotatebox[origin=c]{0}{\parbox{1.5cm}{Power \centering{Circuit}}}}; 
+\node(r1)[rectangle,
+    draw=black,dashed,thick,
+    fill = none,opacity=1,
+    minimum width = 7.4cm, 
+    minimum height = 3.5cm] (r.center) at (4.225,-2.65) {{\parbox{1.5cm}{}}};
+\node (r1Label)[text=blue,above=-2.75 of r1] {\textbf{SAPF}};
+\draw[-{Latex[length=1.75mm]},red] (0.8,0)--node[xshift=0cm,yshift=-0.25cm,color=black]{\textbf{$I_{s}$}}(0.9,0);
+\draw[-{Latex[length=1.75mm]},red] (4.3,0)--node[xshift=0cm,yshift=-0.25cm,color=black]{\textbf{$I_{l}$}}(4.4,0);
+\draw[-{Latex[length=1.75mm]},red] (1.45,-0.5)--node[xshift=0.4cm,yshift=-0.1cm,color=black]{\textbf{$I_{inj}$}}(1.45,-0.4);
+\draw[-{Latex[length=1.75mm]},red] (1.45,-3.1)--node[xshift=0.3cm,yshift=-0.1cm,color=black]{\textbf{$I_{g}$}}(1.45,-3);
+\draw[-{Latex[length=1.75mm]},red] (7,-3)--node[xshift=0.3cm,yshift=-0.1cm,color=black]{\textbf{$I_{h}$}}(7,-3);
+\end{circuitikz}
+\end{document}
